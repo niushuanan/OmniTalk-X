@@ -1,0 +1,629 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+}
+
+.addGroupBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 8px;
+    border: 1px dashed #ccc;
+    border-radius: 10px;
+    background: transparent;
+    color: #667eea;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 8px;
+    box-sizing: border-box;
+    
+    &:hover {
+        background: rgba(102, 126, 234, 0.05);
+        border-color: #667eea;
+    }
+}
+
+.settingsIcon {
+    width: 32px;
+    height: 32px;
+    margin: 0 auto 8px;
+    padding: 6px;
+    border-radius: 8px;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    &:hover {
+        opacity: 1;
+        background: rgba(102, 126, 234, 0.1);
+    }
+    
+    svg {
+        width: 20px;
+        height: 20px;
+        color: #667eea;
+    }
+}
+
+.groupList {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow-y: auto;
+}
+
+.groupItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 8px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: white;
+    border: 1px solid transparent;
+    
+    &:hover {
+        background: #f8f9fa;
+    }
+}
+
+.groupItemActive {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    border-color: rgba(102, 126, 234, 0.3);
+}
+
+.memberList {
+    background: #f5f5f5;
+    border-radius: 8px;
+    padding: 8px;
+    margin-top: 4px;
+    animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.memberItem {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    
+    &:hover {
+        background: rgba(102, 126, 234, 0.1);
+    }
+    
+    .memberAvatar {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        border: 2px solid transparent;
+        object-fit: cover;
+    }
+    
+    .memberName {
+        font-size: 12px;
+        color: #333;
+    }
+}
+
+.memberItemActive {
+    .memberAvatar {
+        border-color: rgba(53, 199, 59, 1);
+        box-shadow: 0 0 6px rgba(53, 199, 59, 0.5);
+    }
+    
+    .memberName {
+        color: #35c73b;
+        font-weight: 500;
+    }
+}
+
+.groupAvatars {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 28px;
+    margin-bottom: 6px;
+    position: relative;
+}
+
+.groupAvatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid white;
+    object-fit: cover;
+    background: #fff;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.moreAvatars {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-left: 48px;
+    font-size: 10px;
+    color: #999;
+    background: #f0f0f0;
+    padding: 2px 4px;
+    border-radius: 4px;
+    z-index: 100;
+}
+
+.groupInfo {
+    text-align: center;
+    width: 100%;
+    max-width: 105px;
+}
+
+.groupName {
+    font-size: 12px;
+    color: #333;
+    font-weight: 500;
+    margin-bottom: 2px;
+    display: block;
+    text-align: center;
+    max-width: 105px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.groupCount {
+    font-size: 10px;
+    color: #999;
+}
+
+.addBtn {
+    width: 100%;
+    padding: 10px;
+    border: 1px dashed #ccc;
+    border-radius: 8px;
+    background: transparent;
+    color: #667eea;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 8px;
+    
+    &:hover {
+        background: rgba(102, 126, 234, 0.05);
+        border-color: #667eea;
+    }
+}
+
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { 
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to { 
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.editorModal, .settingsModal {
+    background: white;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 480px;
+    max-height: 80vh;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: slideUp 0.3s ease;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.editorHeader, .modalHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid #f0f0f0;
+    flex-shrink: 0;
+    
+    span {
+        font-size: 16px;
+        font-weight: 600;
+        color: #333;
+    }
+    
+    .closeBtn {
+        font-size: 24px;
+        color: #999;
+        cursor: pointer;
+        line-height: 1;
+        
+        &:hover {
+            color: #333;
+        }
+    }
+}
+
+.settingsIconSmall {
+    width: 24px;
+    height: 24px;
+    padding: 4px;
+    border-radius: 6px;
+    cursor: pointer;
+    opacity: 0.7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    &:hover {
+        opacity: 1;
+        background: rgba(102, 126, 234, 0.1);
+    }
+    
+    svg {
+        width: 16px;
+        height: 16px;
+        color: #667eea;
+    }
+}
+
+.editorBody, .modalBody {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 20px;
+}
+
+.formGroup {
+    margin-bottom: 16px;
+    
+    label {
+        display: block;
+        font-size: 13px;
+        font-weight: 500;
+        color: #333;
+        margin-bottom: 8px;
+    }
+    
+    .input {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 14px;
+        outline: none;
+        transition: border-color 0.2s;
+        box-sizing: border-box;
+        
+        &:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        &::placeholder {
+            color: #bbb;
+        }
+    }
+}
+
+.botGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+}
+
+.botOption {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    
+    &:hover {
+        background: #f8f9fa;
+    }
+    
+    .botAvatar {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        object-fit: cover;
+        background: #fff;
+    }
+    
+    .botName {
+        font-size: 12px;
+        color: #333;
+    }
+    
+    .checkMark {
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #667eea;
+        font-size: 12px;
+        font-weight: bold;
+    }
+}
+
+.botOptionSelected {
+    border-color: #667eea;
+    background: rgba(102, 126, 234, 0.05);
+}
+
+.editorFooter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-top: 1px solid #f0f0f0;
+    flex-shrink: 0;
+    
+    .footerLeft {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .footerRight {
+        display: flex;
+        gap: 10px;
+    }
+    
+    .cancelBtn, .saveBtn, .deleteBtn {
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 13px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .cancelBtn {
+        border: 1px solid #e0e0e0;
+        background: white;
+        color: #666;
+        
+        &:hover {
+            background: #f5f5f5;
+        }
+    }
+    
+    .saveBtn {
+        border: none;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        
+        &:hover {
+            opacity: 0.9;
+        }
+        
+        &:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+    }
+    
+    .deleteBtn {
+        border: none;
+        background: #fff5f5;
+        color: #ff4d4f;
+        
+        &:hover {
+            background: #ffe0e0;
+        }
+    }
+}
+
+.tabs {
+    display: flex;
+    border-bottom: 1px solid #f0f0f0;
+    
+    .tab {
+        flex: 1;
+        padding: 12px;
+        text-align: center;
+        cursor: pointer;
+        font-size: 13px;
+        color: #666;
+        border-bottom: 2px solid transparent;
+        transition: all 0.2s;
+        
+        &:hover {
+            color: #333;
+        }
+    }
+    
+    .tabActive {
+        color: #667eea;
+        border-bottom-color: #667eea;
+        font-weight: 500;
+    }
+}
+
+.tabContent {
+    animation: fadeIn 0.2s ease;
+}
+
+.modalFooter {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 16px;
+}
+
+.deleteLink {
+    text-align: center;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #f0f0f0;
+    
+    span {
+        color: #ff4d4f;
+        font-size: 13px;
+        cursor: pointer;
+        
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
+.promptsIntro {
+    font-size: 13px;
+    color: #999;
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.promptsList {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.promptItem {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 12px;
+    
+    .promptItemHeader {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        
+        .promptItemName {
+            font-size: 13px;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .promptItemActions {
+            display: flex;
+            gap: 6px;
+        }
+    }
+    
+    .promptTextarea {
+        width: 100%;
+        min-height: 60px;
+        padding: 8px;
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
+        font-size: 12px;
+        line-height: 1.5;
+        resize: vertical;
+        outline: none;
+        box-sizing: border-box;
+        font-family: inherit;
+        
+        &:focus {
+            border-color: #667eea;
+        }
+    }
+    
+    .promptPreview {
+        font-size: 12px;
+        color: #666;
+        line-height: 1.5;
+        white-space: pre-wrap;
+        max-height: 50px;
+        overflow: hidden;
+    }
+    
+    .promptEmpty {
+        font-size: 12px;
+        color: #bbb;
+        font-style: italic;
+    }
+}
+
+.btnSmall {
+    padding: 4px 10px;
+    border: none;
+    border-radius: 4px;
+    background: #667eea;
+    color: white;
+    font-size: 11px;
+    cursor: pointer;
+    
+    &:hover {
+        opacity: 0.9;
+    }
+}
+
+.btnSmallCancel {
+    padding: 4px 10px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    background: white;
+    color: #666;
+    font-size: 11px;
+    cursor: pointer;
+}
+
+.btnSmallDelete {
+    padding: 4px 10px;
+    border: none;
+    border-radius: 4px;
+    background: #fff5f5;
+    color: #ff4d4f;
+    font-size: 11px;
+    cursor: pointer;
+}
+
+@media screen and (max-width: 768px) {
+    .botGrid {
+        grid-template-columns: 1fr;
+    }
+    
+    .editorModal, .settingsModal {
+        max-height: 90vh;
+    }
+}

@@ -1,0 +1,557 @@
+import { useContext, useState, useEffect } from 'react';
+import { getNeedEventCallback } from '@utils/utils.ts';
+import { message } from 'sea-lion-ui';
+import { GlobalConfigContext } from '@components/global-config/global-config-context.tsx';
+import styles from './group-list.module.less';
+import { BotState, useBotStore } from '@/store/bot.ts';
+import { useGroupStore, GroupInfo } from '@/store/group.ts';
+
+const SettingsIcon = () => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+        <circle cx="12" cy="12" r="3"/>
+    </svg>
+);
+
+const GroupList = () => {
+    const { models } = useContext(GlobalConfigContext);
+    const groupStore = useGroupStore();
+    const botStore = useBotStore();
+    const [showSettings, setShowSettings] = useState(false);
+    const [editingGroup, setEditingGroup] = useState<GroupInfo | null>(null);
+    const [showEditor, setShowEditor] = useState(false);
+    const [expandedGroup, setExpandedGroup] = useState<string | null>(null);
+
+    useEffect(() => {
+        loadGroups();
+    }, []);
+
+    const loadGroups = async () => {
+        try {
+            const res = await fetch('/api/groups');
+            const data = await res.json();
+            if (data.success) {
+                groupStore.setGroups(data.groups);
+            }
+        } catch (e) {
+            console.error('加载群组失败:', e);
+        }
+    };
+
+    const handleSelectGroup = (groupId: string, e?: React.MouseEvent) => {
+        if (e) {
+            e.stopPropagation();
+        }
+        // 如果点击的是当前群组，则展开/收起AI列表
+        if (groupStore.currentGroupId === groupId) {
+            setExpandedGroup(expandedGroup === groupId ? null : groupId);
+        } else {
+            // 切换到其他群组
+            groupStore.setCurrentGroupId(groupId);
+            botStore.setPrivateChat(null);
+        }
+    };
+
+    const handleSelectBot = (bot: string, e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (botStore.privateChat === bot) {
+            botStore.setPrivateChat(null);
+        } else {
+            botStore.setPrivateChat(bot);
+        }
+    };
+
+    const handleRightClick = (e: React.MouseEvent, group: GroupInfo) => {
+        e.preventDefault();
+        if (!group.is_default) {
+            setEditingGroup(group);
+            setShowEditor(true);
+        }
+    };
+
+    const handleDeleteGroup = async (groupId: string) => {
+        try {
+            const res = await fetch(`/api/groups/${groupId}`, { method: 'DELETE' });
+            const data = await res.json();
+            if (data.success) {
+                message.success('群组已删除');
+                loadGroups();
+                if (groupStore.currentGroupId === groupId) {
+                    groupStore.setCurrentGroupId('grp_all');
+                }
+            } else {
+                message.error(data.message);
+            }
+        } catch (e) {
+            message.error('删除失败');
+        }
+        setShowEditor(false);
+        setEditingGroup(null);
+    };
+
+    const getBotAvatar = (bot: string): string => {
+        return models?.[bot]?.webui?.avatar || '';
+    };
+
+    const getBotDisplayName = (bot: string): string => {
+        const names: Record<string, string> = {
+            'chatgpt': 'ChatGPT', 'claude': 'Claude', 'grok': 'Grok',
+            'gemini': 'Gemini', 'glm': 'GLM', 'kimi': 'Kimi',
+            'minimax': 'MiniMax', 'qwen': 'Qwen', 'deepseek': 'DeepSeek', 'seed': '豆包',
+        };
+        return names[bot] || bot;
+    };
+
+    const toggleExpand = (groupId: string, e: React.MouseEvent) => {
+        e.stopPropagation();
+        setExpandedGroup(expandedGroup === groupId ? null : groupId);
+    };
+
+    return (
+        <div className={styles.container}>
+            <div 
+                className={styles.addGroupBtn} 
+                onClick={() => { setEditingGroup(null); setShowEditor(true); }}
+                title="新建群组"
+            >
+                + 新建群组
+            </div>
+
+            <div className={styles.groupList}>
+                {[...groupStore.groups].sort((a, b) => {
+                    if (a.is_default) return -1;
+                    if (b.is_default) return 1;
+                    return 0;
+                }).map((group) => (
+                    <div key={group.id}>
+                        <div
+                            className={`${styles.groupItem} ${groupStore.currentGroupId === group.id && !botStore.privateChat ? styles.groupItemActive : ''}`}
+                            onClick={() => handleSelectGroup(group.id)}
+                            onContextMenu={(e) => handleRightClick(e, group)}
+                        >
+                            <div 
+                                className={styles.groupAvatars}
+                            >
+                                {group.bots.slice(0, 5).map((bot, index) => {
+                                    const count = Math.min(group.bots.length, 5);
+                                    const spacing = 14;
+                                    const marginLeft = (index - (count - 1) / 2) * spacing;
+                                    return (
+                                        <img
+                                            key={bot}
+                                            src={getBotAvatar(bot)}
+                                            alt={bot}
+                                            className={styles.groupAvatar}
+                                            style={{ zIndex: count - index, marginLeft: `${marginLeft}px` }}
+                                        />
+                                    );
+                                })}
+                                {group.bots.length > 5 && (
+                                    <div className={styles.moreAvatars}>+{group.bots.length - 5}</div>
+                                )}
+                            </div>
+                            <div className={styles.groupInfo}>
+                                <div className={styles.groupName}>{group.name}</div>
+                            </div>
+                        </div>
+
+                        {expandedGroup === group.id && (
+                            <div className={styles.memberList}>
+                                {group.bots.map((bot) => (
+                                    <div
+                                        key={bot}
+                                        className={`${styles.memberItem} ${botStore.privateChat === bot ? styles.memberItemActive : ''}`}
+                                        onClick={(e) => handleSelectBot(bot, e)}
+                                    >
+                                        <img
+                                            src={getBotAvatar(bot)}
+                                            alt={bot}
+                                            className={styles.memberAvatar}
+                                        />
+                                        <span className={styles.memberName}>{getBotDisplayName(bot)}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                ))}
+            </div>
+
+            {showEditor && (
+                <GroupEditor 
+                    group={editingGroup}
+                    onClose={() => { setShowEditor(false); setEditingGroup(null); }}
+                    onSave={() => { setShowEditor(false); setEditingGroup(null); loadGroups(); }}
+                    onDelete={handleDeleteGroup}
+                />
+            )}
+
+            {showSettings && (
+                <SettingsModal onClose={() => setShowSettings(false)} />
+            )}
+        </div>
+    );
+};
+
+const GroupEditor = ({ group, onClose, onSave, onDelete }: { group: GroupInfo | null; onClose: () => void; onSave: () => void; onDelete?: (id: string) => void }) => {
+    const { models } = useContext(GlobalConfigContext);
+    const [name, setName] = useState(group?.name || '');
+    const [selectedBots, setSelectedBots] = useState<string[]>(group?.bots || []);
+    const [loading, setLoading] = useState(false);
+
+    const allBots = models ? Object.keys(models) : [];
+
+    const toggleBot = (bot: string) => {
+        setSelectedBots(prev => 
+            prev.includes(bot) ? prev.filter(b => b !== bot) : [...prev, bot]
+        );
+    };
+
+    const getBotDisplayName = (bot: string): string => {
+        const names: Record<string, string> = {
+            'chatgpt': 'ChatGPT', 'claude': 'Claude', 'grok': 'Grok',
+            'gemini': 'Gemini', 'glm': 'GLM', 'kimi': 'Kimi',
+            'minimax': 'MiniMax', 'qwen': 'Qwen', 'deepseek': 'DeepSeek', 'seed': '豆包',
+        };
+        return names[bot] || bot;
+    };
+
+    const getBotAvatar = (bot: string): string => {
+        return models?.[bot]?.webui?.avatar || '';
+    };
+
+    const handleSubmit = async () => {
+        if (!name.trim()) {
+            message.warning('请输入群组名称');
+            return;
+        }
+        if (selectedBots.length < 2) {
+            message.warning('请至少选择 2 个 AI');
+            return;
+        }
+
+        setLoading(true);
+        try {
+            const url = group ? `/api/groups/${group.id}` : '/api/groups';
+            const method = group ? 'PUT' : 'POST';
+            
+            const res = await fetch(url, {
+                method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: name.trim(), bots: selectedBots })
+            });
+            
+            const data = await res.json();
+            if (data.success) {
+                message.success(group ? '群组已更新' : '群组已创建');
+                onSave();
+            } else {
+                message.error(data.message);
+            }
+        } catch (e) {
+            message.error('操作失败');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div className={styles.modalOverlay} onClick={onClose}>
+            <div className={styles.editorModal} onClick={e => e.stopPropagation()}>
+                <div className={styles.editorHeader}>
+                    <span>{group ? '编辑群组' : '新建群组'}</span>
+                    <span className={styles.closeBtn} onClick={onClose}>×</span>
+                </div>
+                
+                <div className={styles.editorBody}>
+                    <div className={styles.formGroup}>
+                        <label>群组名称</label>
+                        <input
+                            className={styles.input}
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            placeholder="输入群组名称"
+                            maxLength={20}
+                        />
+                    </div>
+                    
+                    <div className={styles.formGroup}>
+                        <label>选择 AI 成员 ({selectedBots.length})</label>
+                        <div className={styles.botGrid}>
+                            {allBots.map((bot) => (
+                                <div
+                                    key={bot}
+                                    className={`${styles.botOption} ${selectedBots.includes(bot) ? styles.botOptionSelected : ''}`}
+                                    onClick={() => toggleBot(bot)}
+                                >
+                                    <img src={getBotAvatar(bot)} alt={bot} className={styles.botAvatar} />
+                                    <span className={styles.botName}>{getBotDisplayName(bot)}</span>
+                                    {selectedBots.includes(bot) && <span className={styles.checkMark}>✓</span>}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+                
+                <div className={styles.editorFooter}>
+                    <div className={styles.footerLeft}>
+                        {group && !group.is_default && onDelete && (
+                            <button 
+                                className={styles.deleteBtn}
+                                onClick={() => onDelete(group.id)}
+                            >
+                                删除群组
+                            </button>
+                        )}
+                    </div>
+                    <div className={styles.footerRight}>
+                        <button className={styles.cancelBtn} onClick={onClose}>取消</button>
+                        <button className={styles.saveBtn} onClick={handleSubmit} disabled={loading}>
+                            {loading ? '保存中...' : '保存'}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+const SettingsModal = ({ onClose }: { onClose: () => void }) => {
+    const { models } = useContext(GlobalConfigContext);
+    const [activeTab, setActiveTab] = useState<'api' | 'prompts'>('api');
+    const [apiKey, setApiKey] = useState('');
+    const [inputKey, setInputKey] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [systemPrompts, setSystemPrompts] = useState<Record<string, string>>({});
+    const [editingPrompt, setEditingPrompt] = useState<string | null>(null);
+    const [promptText, setPromptText] = useState('');
+
+    useEffect(() => {
+        loadApiKey();
+        loadSystemPrompts();
+    }, []);
+
+    const loadApiKey = async () => {
+        try {
+            const res = await fetch('/api/key');
+            const data = await res.json();
+            if (data.has_key) {
+                setApiKey(data.masked_key);
+                setInputKey(localStorage.getItem('omnitalk9_api_key') || '');
+            }
+        } catch (e) {
+            console.error('加载 API Key 失败:', e);
+        }
+    };
+
+    const loadSystemPrompts = () => {
+        const prompts: Record<string, string> = {};
+        if (models) {
+            Object.keys(models).forEach((modelName) => {
+                const saved = localStorage.getItem('system_prompt_' + modelName);
+                if (saved) {
+                    prompts[modelName] = saved;
+                }
+            });
+        }
+        setSystemPrompts(prompts);
+    };
+
+    const handleSaveApiKey = async () => {
+        const key = inputKey.trim();
+        if (!key) {
+            return;
+        }
+        
+        setLoading(true);
+        try {
+            const res = await fetch('/api/key', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ key })
+            });
+            const data = await res.json();
+            if (data.status === 'ok') {
+                localStorage.setItem('omnitalk9_api_key', key);
+                setApiKey(key);
+                message.success('API Key 保存成功');
+            } else {
+                message.error(data.message || '保存失败');
+            }
+        } catch (e) {
+            message.error('保存失败');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleDeleteApiKey = async () => {
+        setLoading(true);
+        try {
+            const res = await fetch('/api/key', { method: 'DELETE' });
+            const data = await res.json();
+            if (data.status === 'ok') {
+                localStorage.removeItem('omnitalk9_api_key');
+                setApiKey('');
+                setInputKey('');
+                message.success('API Key 已删除');
+            }
+        } catch (e) {
+            message.error('删除失败');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleEditPrompt = (modelName: string) => {
+        setEditingPrompt(modelName);
+        setPromptText(systemPrompts[modelName] || '');
+    };
+
+    const handleSavePrompt = (modelName: string) => {
+        localStorage.setItem('system_prompt_' + modelName, promptText);
+        setSystemPrompts(prev => ({ ...prev, [modelName]: promptText }));
+        setEditingPrompt(null);
+        message.success(`${modelName} 的 System Prompt 已保存`);
+    };
+
+    const handleDeletePrompt = (modelName: string) => {
+        localStorage.removeItem('system_prompt_' + modelName);
+        setSystemPrompts(prev => {
+            const newPrompts = { ...prev };
+            delete newPrompts[modelName];
+            return newPrompts;
+        });
+        message.success(`${modelName} 的 System Prompt 已删除`);
+    };
+
+    const getModelDisplayName = (modelName: string): string => {
+        const names: Record<string, string> = {
+            'chatgpt': 'ChatGPT', 'claude': 'Claude', 'grok': 'Grok',
+            'gemini': 'Gemini', 'glm': 'GLM', 'kimi': 'Kimi',
+            'minimax': 'MiniMax', 'qwen': 'Qwen', 'deepseek': 'DeepSeek', 'seed': '豆包',
+        };
+        return names[modelName] || modelName;
+    };
+
+    return (
+        <div className={styles.modalOverlay} onClick={onClose}>
+            <div className={styles.settingsModal} onClick={e => e.stopPropagation()}>
+                <div className={styles.modalHeader}>
+                    <span>设置</span>
+                    <span className={styles.closeBtn} onClick={onClose}>×</span>
+                </div>
+                
+                <div className={styles.tabs}>
+                    <div 
+                        className={`${styles.tab} ${activeTab === 'api' ? styles.tabActive : ''}`}
+                        onClick={() => setActiveTab('api')}
+                    >
+                        API 配置
+                    </div>
+                    <div 
+                        className={`${styles.tab} ${activeTab === 'prompts' ? styles.tabActive : ''}`}
+                        onClick={() => setActiveTab('prompts')}
+                    >
+                        System Prompt
+                    </div>
+                </div>
+                
+                <div className={styles.modalBody}>
+                    {activeTab === 'api' && (
+                        <div className={styles.tabContent}>
+                            <div className={styles.formGroup}>
+                                <label>OpenRouter API Key</label>
+                                <input 
+                                    className={styles.input}
+                                    value={inputKey}
+                                    onChange={(e) => setInputKey(e.target.value)}
+                                    onBlur={handleSaveApiKey}
+                                    placeholder="sk-or-v1-xxxxxx"
+                                />
+                            </div>
+                            {apiKey && (
+                                <div className={styles.deleteLink}>
+                                    <span onClick={handleDeleteApiKey}>删除 API Key</span>
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {activeTab === 'prompts' && (
+                        <div className={styles.tabContent}>
+                            <div className={styles.promptsIntro}>
+                                为每个 AI 模型设置自定义的 System Prompt
+                            </div>
+                            <div className={styles.promptsList}>
+                                {models && Object.keys(models).map((modelName) => (
+                                    <div key={modelName} className={styles.promptItem}>
+                                        <div className={styles.promptItemHeader}>
+                                            <span className={styles.promptItemName}>
+                                                {getModelDisplayName(modelName)}
+                                            </span>
+                                            <div className={styles.promptItemActions}>
+                                                {editingPrompt === modelName ? (
+                                                    <>
+                                                        <button 
+                                                            className={styles.btnSmall}
+                                                            onClick={() => handleSavePrompt(modelName)}
+                                                        >
+                                                            保存
+                                                        </button>
+                                                        <button 
+                                                            className={styles.btnSmallCancel}
+                                                            onClick={() => setEditingPrompt(null)}
+                                                        >
+                                                            取消
+                                                        </button>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <button 
+                                                            className={styles.btnSmall}
+                                                            onClick={() => handleEditPrompt(modelName)}
+                                                        >
+                                                            {systemPrompts[modelName] ? '编辑' : '添加'}
+                                                        </button>
+                                                        {systemPrompts[modelName] && (
+                                                            <button 
+                                                                className={styles.btnSmallDelete}
+                                                                onClick={() => handleDeletePrompt(modelName)}
+                                                            >
+                                                                删除
+                                                            </button>
+                                                        )}
+                                                    </>
+                                                )}
+                                            </div>
+                                        </div>
+                                        {editingPrompt === modelName ? (
+                                            <textarea
+                                                className={styles.promptTextarea}
+                                                value={promptText}
+                                                onChange={(e) => setPromptText(e.target.value)}
+                                                placeholder="在这里输入 System Prompt..."
+                                            />
+                                        ) : systemPrompts[modelName] ? (
+                                            <div className={styles.promptPreview}>
+                                                {systemPrompts[modelName]}
+                                            </div>
+                                        ) : (
+                                            <div className={styles.promptEmpty}>
+                                                未设置 System Prompt
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export { SettingsModal };
+export default GroupList;

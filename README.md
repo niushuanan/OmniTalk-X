@@ -63,14 +63,14 @@ git clone https://github.com/niushuanan/omnitalk-x
 cd omnitalk-x
 
 # 2. 安装前端依赖
-cd omnitalk9/frontend
+cd omnitalkx/frontend
 npm install
 
 # 3. 构建前端
 npm run build
 
 # 4. 启动后端
-cd ..
+cd ../..
 pip install -r requirements.txt
 python main.py
 ```
@@ -99,7 +99,7 @@ python main.py
 
 ```
 OmniTalk X/
-├── omnitalk9/
+├── omnitalkx/
 │   ├── frontend/          # 前端项目
 │   │   ├── src/
 │   │   │   ├── pages/    # 页面组件

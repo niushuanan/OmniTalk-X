@@ -4,12 +4,20 @@
 .vscode/
 
 # Frontend
-omnitalk9/frontend/node_modules/
-omnitalk9/frontend/package-lock.json
+omnitalkx/frontend/node_modules/
+omnitalkx/frontend/package-lock.json
+omnitalkx/frontend/.vite/
 
 # Backend
-omnitalk9/backend/config/config.yaml
+omnitalkx/backend/config/config.yaml
 config_test.yaml
+api_key.txt
+omnitalkx/__pycache__/
+omnitalkx/backend/__pycache__/
+
+# Contexts (user data)
+omnitalkx/contexts/
+omnitalkx/groups.json
 
 # Python
 *.pyc
