@@ -15,6 +15,9 @@ api_key.txt
 omnitalkx/__pycache__/
 omnitalkx/backend/__pycache__/
 
+# Old project (deprecated)
+omnitalk9/
+
 # Contexts (user data)
 omnitalkx/contexts/
 omnitalkx/groups.json
