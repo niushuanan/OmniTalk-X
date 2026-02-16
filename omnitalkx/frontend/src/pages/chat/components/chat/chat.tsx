@@ -230,10 +230,11 @@ function ChatMessage(props: { message: ChatMessageProps, sessionInfo: {id: numbe
 
 function ChatSession(props: { session: ChatSessionProps }) {
     const { session } = props;
+    const messagesEndRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        autoScroll(`chat-wrapper-${session.id}`);
-    }, [session.messages.length]);
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }, [session.messages.length, session.messages[session.messages.length - 1]?.text]);
 
     return (
         <div className={styles.sessionWrapper}>
@@ -253,6 +254,7 @@ function ChatSession(props: { session: ChatSessionProps }) {
                         </div>
                     );
                 })}
+                <div ref={messagesEndRef} />
             </div>
         </div>
     );

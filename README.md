@@ -161,8 +161,6 @@ OmniTalk X/
 
 ## 常见问题
 
-## 常见问题
-
 ### 1. 如何获取 OpenRouter API Key？
 
 访问 [OpenRouter](https://openrouter.ai/) 注册账号，在个人中心获取 API Key。

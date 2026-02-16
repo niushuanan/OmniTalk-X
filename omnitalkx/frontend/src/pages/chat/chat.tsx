@@ -50,7 +50,9 @@ const ChatPage: React.FC = () => {
     };
 
     const confirmClear = async () => {
-        const targetSession = privateChat || 'group';
+        const targetSession = privateChat 
+            ? privateChat.toLowerCase() 
+            : (currentGroup ? `group_${currentGroup.id}` : 'group');
         
         if (groupStore.currentGroupId !== 'grp_all') {
             try {

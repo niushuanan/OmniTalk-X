@@ -42,8 +42,13 @@ const GroupList = () => {
         if (e) {
             e.stopPropagation();
         }
-        // 如果点击的是当前群组，则展开/收起AI列表
-        if (groupStore.currentGroupId === groupId) {
+        
+        // 如果当前是私聊模式，点击群组应该退出私聊，返回群聊
+        if (botStore.privateChat) {
+            groupStore.setCurrentGroupId(groupId);
+            botStore.setPrivateChat(null);
+        } else if (groupStore.currentGroupId === groupId) {
+            // 群聊模式下，点击当前群组才展开/收起AI列表
             setExpandedGroup(expandedGroup === groupId ? null : groupId);
         } else {
             // 切换到其他群组
