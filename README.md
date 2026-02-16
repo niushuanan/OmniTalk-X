@@ -1,146 +1,154 @@
-<div align="center">
-  <img src="docs/_static/image/aoe-logo.svg" width="250"/>
+# OmniTalk X
 
-[![PyPI](https://img.shields.io/pypi/v/OpenAOE)](https://pypi.org/project/OpenAOE)
-[![Docker Image Version (tag latest semver)](https://img.shields.io/docker/v/opensealion/openaoe?label=docker)](https://hub.docker.com/r/opensealion/openaoe?label=docker)
-![GitHub commit activity](https://img.shields.io/github/commit-activity/w/internlm/openaoe?label=commits)
-![PyPI - Downloads](https://img.shields.io/pypi/dw/openaoe?label=pip%20downloads)
+<p align="center">
+  <img src="docs/_static/image/aoe-logo.svg" width="250" alt="OmniTalk X Logo"/>
+</p>
 
+<p align="center">
+  <a href="https://github.com/niushuanan/omnitalk-x">
+    <img src="https://img.shields.io/github/license/niushuanan/omnitalk-x" alt="License">
+  </a>
+  <a href="https://github.com/niushuanan/omnitalk-x">
+    <img src="https://img.shields.io/github/stars/niushuanan/omnitalk-x" alt="Stars">
+  </a>
+</p>
 
+---
 
+## 介绍
 
+**OmniTalk X** 是一款基于 OpenRouter 的 **AI 多模型群聊平台**。
 
-English | [简体中文](docs/README_zh-CN.md)
+通过 OmniTalk X，你可以：
 
-</div>
+- **群聊模式**：一条消息同时获得多个 AI 模型的回复
+- **私聊模式**：与单个 AI 进行私密对话
+- **@提及**：通过 @ 指令指定特定 AI 回复
+- **自定义 Prompt**：为每个 AI 设置专属的 System Prompt
+- **群组管理**：创建不同的 AI 群组，灵活配置参与模型
 
+![OmniTalk X Demo](docs/_static/gif/aoe-en.gif)
 
-## Latest Progress 🎉
-- \[March 2024\] Add gemma-7b and qwen-7b models（based on Ollama）
-- \[February 2024\] Add mistral-7b model (based on Ollama)
-- \[February 2024\] Add gemini-pro model (based on Open API)
-- \[January 2024\] refactor the config-template.yaml to control the backend and the frontend settings at the same time, [click](https://github.com/InternLM/OpenAOE/blob/main/docs/tech-report/config-template.md) to find more introduction about the `config-template.yaml`
-- \[January 2024\] Add internlm2-chat-7b model (based on LMDeploy)
-- \[January 2024\] Released version v0.0.1, officially open source！
-______________________________________________________________________
+---
 
-# Introduction
-## What is OpenAOE?
-AOE, an acronym from DOTA2 for Area Of Effect, denotes an ability that can affect a group of targets within a certain area.
-Here, AOE in AI implies that user can obtain parallel outputs from multiple LLMs with one single prompt at the same time.
+## 功能特性
 
-![](docs/_static/gif/aoe-en.gif)
+| 功能 | 说明 |
+|------|------|
+| 多模型并行响应 | 10 个主流 AI 同时回复 |
+| 私聊模式 | 与单个 AI 私密对话 |
+| @提及 | 指定特定 AI 回复 |
+| System Prompt | 为每个 AI 自定义提示词 |
+| 群组功能 | 创建和管理 AI 群组 |
+| 上下文记忆 | 智能记住对话历史 |
+| 流式输出 | 实时显示 AI 回复 |
+| 主题切换 | 支持浅色/深色主题 |
 
+---
 
-## What problem does OpenAOE want to solve?
-Currently, there are many open-source frameworks based on the ChatGPT for chat, but the LGC(LLM Group Chat) framework is still not coming yet.
+## 支持的 AI 模型
 
-The emergence of OpenAOE fills this gap:
-OpenAOE can help LLM researchers, evaluators, engineering developers, and even non-professionals to quickly access the market's well-known commercial and open-source LLMs, providing both single model serial response mode and multi-models parallel response mode.
+| 模型 | Provider |
+|------|----------|
+| ChatGPT | openai |
+| Claude | anthropic |
+| Grok | xai |
+| Gemini | google |
+| GLM | zhipu |
+| Kimi | moonshot |
+| MiniMax | minimax |
+| Qwen | qwen |
+| DeepSeek | deepseek |
+| Seed | bytedance |
 
+---
 
+## 快速开始
 
-## What can you get from OpenAOE?
-OpenAOE can:
-1. return one or more LLMs' answers **at the same time** by a single prompt.
-2. provide access to commercial LLM APIs, with default support for gpt3.5, gpt4, Google Palm, Minimax, Claude, Spark, etc., and also support user-defined access to other large model APIs. (API keys need to be prepared in advanced)
-3. provide access to open-source LLM APIs. ( We recommend to use [LMDeploy](https://github.com/InternLM/lmdeploy) to deploy with one click)
-4. provide backend APIs and a WEB-UI to meet the needs of different requirements.
+### 环境要求
 
+- Python >= 3.9
+- Node.js >= 16
+- OpenRouter API Key
 
+### 安装运行
 
-# Quick Run
-> [!TIP]
-> Require python >= 3.9
+#### 方式一：源码运行
 
-We provide three different ways to run OpenAOE: `run by pip`， `run by docker` and `run by source code` as well.
+```bash
+# 1. 克隆项目
+git clone https://github.com/niushuanan/omnitalk-x
+cd omnitalk-x
 
-## Run by pip 
-### **Install**
-```shell
-pip install -U openaoe 
-```
-### **Start**
-```shell
-openaoe -f /path/to/your/config-template.yaml
-```
-
-## Run by docker
-### **Install**
-
-There are two ways to get the OpenAOE docker image by:
-1. pull the OpenAOE docker image
-```shell
-docker pull opensealion/openaoe:latest
-```
-
-2. or build a docker image
-```shell
-git clone https://github.com/internlm/OpenAOE
-cd OpenAOE
-docker build . -f docker/Dockerfile -t opensealion/openaoe:latest
-```
-
-### **Start**
-```shell
-docker run -p 10099:10099 -v /path/to/your/config-template.yaml:/app/config.yaml --name OpenAOE opensealion/openaoe:latest
-```
-
-## Run by source code
-### **Install**
-1. clone this project
-```shell
-git clone https://github.com/internlm/OpenAOE
-```
-2. [_optional_] build the frontend project when the frontend codes are changed
-```shell
-cd OpenAOE/openaoe/frontend
+# 2. 安装前端依赖
+cd omnitalk9/frontend
 npm install
+
+# 3. 构建前端
 npm run build
+
+# 4. 启动后端
+cd ..
+pip install -r requirements.txt
+python main.py
 ```
 
+#### 方式二：Docker 运行
 
-### **Start**
-```shell
-cd OpenAOE # this OpenAOE is the clone directory
-pip install -r openaoe/backend/requirements.txt
-python -m openaoe.main -f /path/to/your/config-template.yaml
+```bash
+docker run -p 8000:8000 -p 5173:5173 niushuanan/omnitalk-x
 ```
 
+---
 
-> [!TIP]
-> `/path/to/your/config-template.yaml` is a configuration file loaded by OpenAOE at startup, 
-> which contains the relevant configuration information for the LLMs,
-> including: API URLs, AKSKs, Tokens, etc.
-> A template configuration yaml file can be found in `openaoe/backend/config/config-template.yaml`.
-> Note that, this `config-template.yaml` DOES NOT contain any API access data, you should add them by yourself.
+## 配置说明
 
+### 获取 OpenRouter API Key
 
-#  Tech Report
-> **You are always welcome to fork this project to contribute your work**
-> **and find the [TODOs in furture](docs/todo/TODO.md).**
+1. 访问 [OpenRouter](https://openrouter.ai/)
+2. 注册账号并获取 API Key
+3. 在设置页面输入 API Key 即可使用
 
-If you want to add more LLMs' APIs or features based on OpenAOE, the following info might be helpful.
+### 自定义 System Prompt
 
-## Tech Stack
-The technology stack we use includes:
+点击右侧设置图标，可以为每个 AI 模型设置自定义的 System Prompt。
 
-1. Backend framework based on python + fastapi;
-2. Frontend framework based on typescript + Sealion-Client (encapsulated based on React) + Sealion-UI.
-3. Build tools:
-   1. conda: quickly create a virtual python env to install necessary packages
-   2. npm: build the frontend project
+---
 
-> [!TIP]
-> The build tools can be installed quickly by `pip install -U sealion-cli`
+## 项目结构
 
-## Organization of the Repo
-- Frontend codes are in `openaoe/frontend`
-- Backend codes are in `openaoe/backend`
-- Project entry-point is `openaoe/main.py`
+```
+OmniTalk X/
+├── omnitalk9/
+│   ├── frontend/          # 前端项目
+│   │   ├── src/
+│   │   │   ├── pages/    # 页面组件
+│   │   │   ├── components/# 公共组件
+│   │   │   ├── store/    # 状态管理
+│   │   │   └── config/   # 配置文件
+│   │   └── public/       # 静态资源
+│   ├── backend/          # 后端项目
+│   │   ├── api/          # API 路由
+│   │   ├── service/      # 业务服务
+│   │   └── config/       # 配置文件
+│   └── main.py           # 项目入口
+└── docs/                 # 文档
+```
 
-## How to add a new model
-### Frontend
-- Add new model info like `name`, `avatar`, `provider`, etc in `openaoe/frontend/src/config/model-config.ts`
-- Add a new model basic API request payload configuration in `openaoe/frontend/src/config/api-config.ts`
-- Modify your new model's payload specifically in `openaoe/frontend/src/services/fetch.ts`, you may need to change the payload structure and handle corner cases according to your model's API definition.
+---
+
+## 技术栈
+
+| 层级 | 技术 |
+|------|------|
+| 前端 | React 18 + TypeScript + Vite |
+| 状态管理 | Zustand |
+| UI 组件 | sea-lion-ui |
+| 后端 | FastAPI + Python |
+| API 聚合 | OpenRouter |
+
+---
+
+## License
+
+MIT License
