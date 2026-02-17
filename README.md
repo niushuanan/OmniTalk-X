@@ -2,42 +2,42 @@
 
 **English** | [简体中文](./docs/README_zh-CN.md)
 
-## 介绍
+## Introduction
 
-> OmniTalk X 是基于 [OpenAOE](https://github.com/InternLM/OpenAOE) 项目的二次开发，主要借鉴了其前端设计，并进行了功能扩展和优化。
+> OmniTalk X is a secondary development based on the [OpenAOE](https://github.com/InternLM/OpenAOE) project, mainly borrowing its frontend design with functional extensions and optimizations.
 
-**OmniTalk X** 是一款基于 OpenRouter 的 **AI 多模型群聊平台**。
+**OmniTalk X** is an **AI multi-model group chat platform** based on OpenRouter.
 
-通过 OmniTalk X，你可以：
+With OmniTalk X, you can:
 
-- **群聊模式**：一条消息同时获得多个 AI 模型的回复
-- **私聊模式**：与单个 AI 进行私密对话
-- **@提及**：通过 @ 指令指定特定 AI 回复
-- **自定义 Prompt**：为每个 AI 设置专属的 System Prompt
-- **群组管理**：创建不同的 AI 群组，灵活配置参与模型
-- **上下文记忆**：智能记住对话历史
-- **流式输出**：实时显示 AI 回复
-
----
-
-## 功能特性
-
-| 功能 | 说明 |
-|------|------|
-| 多模型并行响应 | 10 个主流 AI 同时回复 |
-| 私聊模式 | 与单个 AI 私密对话 |
-| @提及 | 指定特定 AI 回复 |
-| System Prompt | 为每个 AI 自定义提示词 |
-| 群组功能 | 创建和管理 AI 群组 |
-| 上下文记忆 | 智能记住对话历史 |
-| 流式输出 | 实时显示 AI 回复 |
+- **Group Chat Mode**: Get responses from multiple AI models simultaneously with one message
+- **Private Chat Mode**: Have private conversations with a single AI
+- **@Mention**: Use @ command to specify which AI should reply
+- **Custom Prompt**: Set exclusive System Prompt for each AI
+- **Group Management**: Create different AI groups and flexibly configure participating models
+- **Context Memory**: Intelligently remember conversation history
+- **Streaming Output**: Display AI responses in real-time
 
 ---
 
-## 支持的 AI 模型
+## Features
 
-| 模型 | Provider | 模型 ID |
-|------|----------|---------|
+| Feature | Description |
+|---------|-------------|
+| Multi-Model Parallel Response | 10 mainstream AIs respond simultaneously |
+| Private Chat Mode | Private conversation with a single AI |
+| @Mention | Specify which AI to reply |
+| System Prompt | Custom prompts for each AI |
+| Group Function | Create and manage AI groups |
+| Context Memory | Intelligently remember conversation history |
+| Streaming Output | Display AI responses in real-time |
+
+---
+
+## Supported AI Models
+
+| Model | Provider | Model ID |
+|-------|----------|----------|
 | ChatGPT | openai | openai/gpt-5.2 |
 | Claude | anthropic | anthropic/claude-opus-4.5 |
 | Grok | xai | x-ai/grok-4 |
@@ -51,137 +51,137 @@
 
 ---
 
-## 快速开始
+## Quick Start
 
-### 环境要求
+### Requirements
 
 - Python >= 3.9
 - Node.js >= 16
 - OpenRouter API Key
 
-### 安装运行
+### Installation & Run
 
 ```bash
-# 1. 克隆项目
+# 1. Clone the project
 git clone https://github.com/niushuanan/omnitalk-x
 cd omnitalk-x
 
-# 2. 安装前端依赖
+# 2. Install frontend dependencies
 cd omnitalkx/frontend
 npm install
 
-# 3. 构建前端
+# 3. Build frontend
 npm run build
 
-# 4. 启动后端
+# 4. Start backend
 cd ../..
 pip install -r requirements.txt
 python main.py
 ```
 
-服务启动后，访问：
-- 前端：http://localhost:5173
-- 后端：http://localhost:8000
+After the service starts, visit:
+- Frontend: http://localhost:5173
+- Backend: http://localhost:8000
 
 ---
 
-## 配置说明
+## Configuration
 
-### 获取 OpenRouter API Key
+### Get OpenRouter API Key
 
-1. 访问 [OpenRouter](https://openrouter.ai/) 注册账号
-2. 获取 API Key
-3. 在页面右侧点击设置图标，输入 API Key 即可使用
+1. Visit [OpenRouter](https://openrouter.ai/) to register an account
+2. Get your API Key
+3. Click the settings icon on the right side of the page and enter your API Key
 
-### 自定义 System Prompt
+### Custom System Prompt
 
-点击右侧设置图标，可以为每个 AI 模型设置自定义的 System Prompt。
+Click the settings icon on the right side to set custom System Prompt for each AI model.
 
 ---
 
-## 项目结构
+## Project Structure
 
 ```
 OmniTalk X/
 ├── omnitalkx/
-│   ├── frontend/          # 前端项目
+│   ├── frontend/          # Frontend project
 │   │   ├── src/
-│   │   │   ├── pages/    # 页面组件
-│   │   │   ├── components/# 公共组件
-│   │   │   ├── store/    # 状态管理
-│   │   │   └── config/   # 配置文件
-│   │   └── public/       # 静态资源
-│   ├── backend/          # 后端项目
-│   │   ├── api/          # API 路由
-│   │   ├── service/      # 业务服务
-│   │   └── config/       # 配置文件
-│   └── main.py           # 项目入口
-└── docs/                 # 文档
+│   │   │   ├── pages/    # Page components
+│   │   │   ├── components/# Common components
+│   │   │   ├── store/    # State management
+│   │   │   └── config/   # Configuration files
+│   │   └── public/       # Static resources
+│   ├── backend/          # Backend project
+│   │   ├── api/          # API routes
+│   │   ├── service/      # Business services
+│   │   └── config/       # Configuration files
+│   └── main.py           # Project entry
+└── docs/                 # Documentation
 ```
 
 ---
 
-## 技术栈
+## Tech Stack
 
-| 层级 | 技术 |
-|------|------|
-| 前端 | React 18 + TypeScript + Vite |
-| 状态管理 | Zustand |
-| UI 组件 | sea-lion-ui |
-| 后端 | FastAPI + Python |
-| API 聚合 | OpenRouter |
-
----
-
-## 代码架构原则
-
-### 前端架构
-
-- **组件化开发**：采用 React 函数组件 + Hooks 模式
-- **状态管理**：使用 Zustand 进行全局状态管理，按功能模块划分 store
-- **类型安全**：TypeScript 严格模式，接口定义清晰
-- **样式管理**：Less 预处理器，变量统一管理主题色
-
-### 后端架构
-
-- **RESTful API**：清晰的路由设计
-- **服务分层**：API → Service → Model 分层解耦
-- **配置管理**：YAML 配置文件，支持多环境切换
-- **日志系统**：统一的日志记录规范
-
-### 核心设计模式
-
-1. **前端**
-   - 自定义 Hooks：复用业务逻辑
-   - Context：全局配置管理
-   - Interceptors：请求/响应统一处理
-
-2. **后端**
-   - 依赖注入：服务层解耦
-   - 流式响应：Server-Sent Events (SSE)
-   - CORS：跨域资源共享配置
+| Layer | Technology |
+|-------|------------|
+| Frontend | React 18 + TypeScript + Vite |
+| State Management | Zustand |
+| UI Components | sea-lion-ui |
+| Backend | FastAPI + Python |
+| API Aggregation | OpenRouter |
 
 ---
 
-## 常见问题
+## Code Architecture Principles
 
-### 1. 如何获取 OpenRouter API Key？
+### Frontend Architecture
 
-访问 [OpenRouter](https://openrouter.ai/) 注册账号，在个人中心获取 API Key。
+- **Component-based Development**: Using React functional components + Hooks pattern
+- **State Management**: Using Zustand for global state management, divided by functional modules
+- **Type Safety**: TypeScript strict mode with clear interface definitions
+- **Style Management**: Less preprocessor with unified theme color variables
 
-### 2. 为什么消息发送失败？
+### Backend Architecture
 
-- 检查 API Key 是否有效
-- 检查网络连接是否正常
-- 确认选择的 AI 模型是否可用
+- **RESTful API**: Clear route design
+- **Service Layering**: API → Service → Model layered decoupling
+- **Configuration Management**: YAML configuration files, supporting multi-environment switching
+- **Logging System**: Unified logging specification
 
-### 3. 如何查看消耗的积分？
+### Core Design Patterns
 
-在 OpenRouter 账户页面查看使用统计。
+1. **Frontend**
+   - Custom Hooks: Reuse business logic
+   - Context: Global configuration management
+   - Interceptors: Unified request/response handling
 
-### 4. 支持自定义模型吗？
+2. **Backend**
+   - Dependency Injection: Service layer decoupling
+   - Streaming Response: Server-Sent Events (SSE)
+   - CORS: Cross-Origin Resource Sharing configuration
 
-当前支持 OpenRouter 提供的所有模型，可通过配置文件添加新模型。
+---
+
+## FAQ
+
+### 1. How to get OpenRouter API Key?
+
+Visit [OpenRouter](https://openrouter.ai/) to register an account and get your API Key in the personal center.
+
+### 2. Why did the message sending fail?
+
+- Check if the API Key is valid
+- Check if the network connection is normal
+- Confirm if the selected AI model is available
+
+### 3. How to check consumed credits?
+
+View usage statistics on the OpenRouter account page.
+
+### 4. Does it support custom models?
+
+Currently supports all models provided by OpenRouter, new models can be added through configuration files.
 
 ---
 
